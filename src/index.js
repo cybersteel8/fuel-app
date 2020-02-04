@@ -133,18 +133,19 @@ class FuelEntry extends React.Component {
     }
 }
 
-class Main extends React.Component {    
-    defaultPrefillData = {
-        id: "",
-        date: "",
-        consumption: "",
-        speed: "",
-        fuel: "",
-        distance: "",
-    }
-
+class Main extends React.Component {
     constructor(props) {
         super(props);
+        
+        this.defaultPrefillData = {
+            id: "",
+            date: "",
+            consumption: "",
+            speed: "",
+            fuel: "",
+            distance: "",
+        };
+
         this.state = {
             fuelEntries: [],
             previousFuelEntries: undefined,
