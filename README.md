@@ -9,7 +9,7 @@ See `package.json` for dependency list.
 
 2. `npm install`
 
-3. Run `npx babel --watch src --out-dir . --presets react-app/prod ` in terminal to get Babel to transpile the js into a `index.js` file.
+3. Run `npm run-script watch` in terminal to get Babel to transpile the js into a `index.js` file.
 
 4. Run `npx webpack` to read the `index.js` file Babel made and create a `bundle.js` which is the final product.
 
