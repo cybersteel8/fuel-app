@@ -1,2 +1,4 @@
 node_modules
 deploy.bat
+index.js
+bundle.js
