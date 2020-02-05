@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
 
-class AddFuelModal extends React.Component {
+class AddFuelModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -107,7 +107,7 @@ class AddFuelModal extends React.Component {
     }
 }
 
-class FuelEntry extends React.Component {
+class FuelEntry extends Component {
     constructor(props) {
         super(props);
     }
@@ -133,7 +133,7 @@ class FuelEntry extends React.Component {
     }
 }
 
-class Main extends React.Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         
@@ -250,22 +250,27 @@ class Main extends React.Component {
         });
     }
 
-    render() {
-        var dates = [
-            new Date(2020, 1, 1),
-            new Date(2020, 1, 2),
-            new Date(2020, 1, 3),
-            new Date(2020, 1, 4),
-            new Date(2020, 1, 5),
-            new Date(2020, 1, 6),
-            new Date(2020, 1, 7),
-            new Date(2020, 1, 8),
-            new Date(2020, 1, 9)
-          ]
+    parseDate(date) {
+        let parsedDate = new Date();
+        let parts = date.split("-");
+        // console.log(parts);
+        parsedDate.setDate(parts[0]);
+        parsedDate.setMonth(parts[1]-1);
+        parsedDate.setFullYear(parts[2]);
+        // console.log(parsedDate.toDateString());
+        return parsedDate;
+    }
 
-        var graph = [{
+    render() {
+        let dates = [];
+        let values = [];
+        this.state.fuelEntries.forEach((entry) => {
+            dates.push(this.parseDate(entry.date));
+            values.push(entry.consumption);
+        });
+        let graph = [{
             x: dates,
-            y: [10,20,30,40,50,60,70,80,90],
+            y: values,
             type: 'scatter'
         }];
           
@@ -322,7 +327,7 @@ class Main extends React.Component {
  * This is a wrapper around the entry point of the application to gracefully catch and handle any errors in the application.
  * They currently get logged to the browser's console and a simple message is displayed on screen.
  */
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
     constructor(props) {
       super(props);
       this.state = { hasError: false };
