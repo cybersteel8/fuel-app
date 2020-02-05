@@ -15,9 +15,9 @@ See `package.json` for dependency list.
 
 5. Copy the following files into your web server:
 
-* src/index.html
-* src/index.css
-* ./bundle.js
+* src/index.html -> /path/to/server/.../index.html
+* src/index.css -> /path/to/server/.../index.css
+* ./bundle.js -> /path/to/server/.../bundle.js
 
 6. Go to your web server's home page (eg. http://localhost/fuel-app)
 
