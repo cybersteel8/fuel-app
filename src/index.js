@@ -133,6 +133,57 @@ class FuelEntry extends Component {
     }
 }
 
+class FuelGraph extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dates: [],
+            values: []
+        }
+    }
+
+    parseDate(date) {
+        let parsedDate = new Date();
+        let parts = date.split("-");
+        // console.log(parts);
+        parsedDate.setDate(parts[0]);
+        parsedDate.setMonth(parts[1]-1);
+        parsedDate.setFullYear(parts[2]);
+        // console.log(parsedDate.toDateString());
+        return parsedDate;
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps != this.props) {
+            let dates = [];
+            let values = []
+            this.props.fuelEntries.forEach((entry) => {
+                dates.push(this.parseDate(entry.date));
+                values.push(entry.consumption);
+            });
+
+            this.setState({
+                dates: dates,
+                values: values
+            });
+        }
+    }
+
+    render() {
+        console.log("Rendering FuelGraph", this.props.fuelEntries);
+        return(
+            <Plot
+                data={[{
+                    x: this.state.dates,
+                    y: this.state.values,
+                    type: 'scatter'
+                }]}
+                layout={{title: "Consumption over time"}}
+            />
+        )
+    }
+}
+
 class Main extends Component {
     constructor(props) {
         super(props);
@@ -249,31 +300,7 @@ class Main extends Component {
             previousFuelEntries: undefined
         });
     }
-
-    parseDate(date) {
-        let parsedDate = new Date();
-        let parts = date.split("-");
-        // console.log(parts);
-        parsedDate.setDate(parts[0]);
-        parsedDate.setMonth(parts[1]-1);
-        parsedDate.setFullYear(parts[2]);
-        // console.log(parsedDate.toDateString());
-        return parsedDate;
-    }
-
     render() {
-        let dates = [];
-        let values = [];
-        this.state.fuelEntries.forEach((entry) => {
-            dates.push(this.parseDate(entry.date));
-            values.push(entry.consumption);
-        });
-        let graph = [{
-            x: dates,
-            y: values,
-            type: 'scatter'
-        }];
-          
         return(
         <div id="siteContainer">
             {this.state.isFuelModalOpen ?
@@ -318,7 +345,7 @@ class Main extends Component {
                         editFn={(prefill) => this.openFuelModal(prefill)}
                     />)}</tbody>
             </table>
-            <Plot data={graph} />
+            <FuelGraph fuelEntries={this.state.fuelEntries}/>
         </div>)
     }
 }
