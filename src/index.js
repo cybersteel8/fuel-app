@@ -2,6 +2,12 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Plot from 'react-plotly.js';
 
+let GraphModeEnum = Object.freeze({
+    CONSUMPTION_OVER_TIME: 1,
+    FUEL_OVER_TIME: 2,
+    DISTANCE_OVER_TIME: 3
+});
+
 class AddFuelModal extends Component {
     constructor(props) {
         super(props);
@@ -137,8 +143,11 @@ class FuelGraph extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dates: [],
-            values: []
+            abscissa: [],
+            ordinate: [],
+            title: "",
+            xLabel: "",
+            yLabel: ""
         }
     }
 
@@ -155,30 +164,70 @@ class FuelGraph extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if(prevProps != this.props) {
-            let dates = [];
-            let values = []
+            let x = [];
+            let y = [];
+            let xLabel = "";
+            let yLabel = "";
+            let graphTitle = "";
+
             this.props.fuelEntries.forEach((entry) => {
-                dates.push(this.parseDate(entry.date));
-                values.push(entry.consumption);
+                switch(this.props.graph) {
+                    case GraphModeEnum.CONSUMPTION_OVER_TIME:
+                        xLabel = "Time";
+                        yLabel = "Consumption (L/100km)";
+                        graphTitle = "Consumption Over Time";
+                        x.push(this.parseDate(entry.date));
+                        y.push(entry.consumption);
+                        break;
+                    case GraphModeEnum.DISTANCE_OVER_TIME:
+                        xLabel = "Time";
+                        yLabel = "Distance (km)";
+                        graphTitle = "Distance Over Time";
+                        x.push(this.parseDate(entry.date));
+                        y.push(entry.distance);
+                        break;
+                    case GraphModeEnum.FUEL_OVER_TIME:
+                        x.push(this.parseDate(entry.date));
+                        y.push(entry.fuel);
+                        xLabel = "Time";
+                        yLabel = "Fuel Used (L)";
+                        graphTitle = "Fuel Usage Over Time";
+                        break;
+                    default:
+                        console.error("GraphMode not provided");
+                }
+                
             });
 
             this.setState({
-                dates: dates,
-                values: values
+                abscissa: x,
+                ordinate: y,
+                yLabel: yLabel,
+                xLabel: xLabel,
+                title: graphTitle
             });
+            
         }
     }
 
     render() {
-        console.log("Rendering FuelGraph", this.props.fuelEntries);
         return(
             <Plot
                 data={[{
-                    x: this.state.dates,
-                    y: this.state.values,
+                    x: this.state.abscissa,
+                    y: this.state.ordinate,
+                    mode: 'lines+markers',
                     type: 'scatter'
                 }]}
-                layout={{title: "Consumption over time"}}
+                layout={{
+                    title: this.state.title,
+                    yaxis: {
+                        title: this.state.yLabel
+                    },
+                    xaxis: {
+                        title: this.state.xLabel
+                    }
+                }}
             />
         )
     }
@@ -187,7 +236,7 @@ class FuelGraph extends Component {
 class Main extends Component {
     constructor(props) {
         super(props);
-        
+
         this.defaultPrefillData = {
             id: "",
             date: "",
@@ -202,7 +251,8 @@ class Main extends Component {
             previousFuelEntries: undefined,
             isEditModeEnabled: false,
             isFuelModalOpen: false,
-            fuelModalPrefill: this.defaultPrefillData
+            fuelModalPrefill: this.defaultPrefillData,
+            graphMode: GraphModeEnum.CONSUMPTION_OVER_TIME
         }
     }
 
@@ -300,6 +350,11 @@ class Main extends Component {
             previousFuelEntries: undefined
         });
     }
+
+    changeGraph(graph) {
+        this.setState({graphMode: graph});
+    }
+
     render() {
         return(
         <div id="siteContainer">
@@ -345,7 +400,11 @@ class Main extends Component {
                         editFn={(prefill) => this.openFuelModal(prefill)}
                     />)}</tbody>
             </table>
-            <FuelGraph fuelEntries={this.state.fuelEntries}/>
+            <FuelGraph fuelEntries={this.state.fuelEntries} graph={this.state.graphMode} />
+            <button onClick={() => this.changeGraph(GraphModeEnum.CONSUMPTION_OVER_TIME)}>CONSUMPTION_OVER_TIME</button>
+            <button onClick={() => this.changeGraph(GraphModeEnum.DISTANCE_OVER_TIME)}>DISTANCE_OVER_TIME</button>
+            <button onClick={() => this.changeGraph(GraphModeEnum.FUEL_OVER_TIME)}>FUEL_OVER_TIME</button>
+
         </div>)
     }
 }
