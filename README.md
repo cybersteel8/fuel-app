@@ -9,9 +9,9 @@ See `package.json` for dependency list.
 
 2. `npm install`
 
-3. Run `npm run-script watch` in terminal to get Babel to transpile the js into a `index.js` file.
+3. Run `npm run-script watch` in terminal - This will use Babel to transpile the js into a `index.js` file automatically upon saving.
 
-4. Run `npx webpack` to read the `index.js` file Babel made and create a `bundle.js` which is the final product.
+4. Run `npx run-script compile` in terminal - This will use Webpack to read the `index.js` file Babel makes and create a `bundle.js` which is the final product (also happens automatically).
 
 5. Copy the following files into your web server:
 

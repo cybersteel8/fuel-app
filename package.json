@@ -4,7 +4,8 @@
     "description": "FuelApp",
     "main": "index.js",
     "scripts": {
-        "watch": "npx babel --watch src --out-file index.js --presets @babel/preset-react"
+        "watch": "npx babel --watch src --out-file index.js --presets @babel/preset-react",
+        "compile": "npx webpack"
     },
     "author": "Simon Elturk",
     "license": "",
